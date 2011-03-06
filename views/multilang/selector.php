@@ -9,6 +9,5 @@
 			<span><?php echo $language['label']; ?></span>
 		</li>
 		<?php endif; ?>
-		<li cllass="clearer"></li>
 	<?php endforeach; ?>
 </ul>
