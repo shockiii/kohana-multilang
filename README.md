@@ -47,7 +47,7 @@ Partly based on this module https://github.com/GeertDD/kohana-lang
 
 ### Example
 
-If you try to access http://www.domain.tld/, the module will redirect it to http://www.domain.tld/en/ for example.
+If you try to access `http://www.domain.tld/`, the module will redirect it to `http://www.domain.tld/en/` for example.
 
 Let's say we have a product page, with kohana 3 we'd have something like : 
 	
@@ -62,8 +62,8 @@ Let's say we have a product page, with kohana 3 we'd have something like :
 	));
 
 	
-If you try to access http://www.domain.tld/products/12-my-product, it will redirect to http://www.domain.tld/en/products/12-my-product.
-Now, I'm on the same page in french http://www.domain.tld/fr/products/12-my-product, but I'd like to translate it and set `produits` instead of `products`. You can use the `Routes` object (notice the S at the end) to set multiple routes for each language.
+If you try to access `http://www.domain.tld/products/12-my-product`, it will redirect to `http://www.domain.tld/en/products/12-my-product`.
+Now, I'm on the same page in french `http://www.domain.tld/fr/products/12-my-product`, but I'd like to translate it and set `produits` instead of `products`. You can use the `Routes` object (notice the S at the end) to set multiple routes for each language.
 
 	Routes::set('product.details', array(
 		'en' => 'products/<product_id>-<product_slug>',
@@ -78,9 +78,9 @@ Now, I'm on the same page in french http://www.domain.tld/fr/products/12-my-prod
 		'product_slug'		=> '',
 	));
 	
-This creates 2 routes named en.products.details and fr.products.details. The default language (english here) is required. If we have a third language like `de`, it will use `en`. The thing is, both url  http://www.domain.tld/fr/products/12-my-product and http://www.domain.tld/en/produits/12-my-product will still work. To make sure this is not an issue, you should use reverse routing everywhere. With Route::get('product/details')->uri(array('product_id' => 12, 'product_slug' => 'my_product')), you'll get the complete uri with the current user language code. To get another language, just pass a second parameter to Route::get('product/details', 'en').
+This creates 2 routes named `en.products.details` and `fr.products.details`. The default language (english here) is required. If we have a third language like `de`, it will use `en`. The thing is, both url `http://www.domain.tld/fr/products/12-my-product` and `http://www.domain.tld/en/produits/12-my-product` will still work. To make sure this is not an issue, you should use reverse routing everywhere. With `Route::get('product/details')->uri(array('product_id' => 12, 'product_slug' => 'my_product'))`, you'll get the complete uri with the current user language code. To get another language, just pass a second parameter to `Route::get('product/details', 'en')`.
 
-Now, I got a controller that serves CSS files, I obviously don't need any language specified. To prevent the normal behaviour, just pass FALSE as the third parameter to Route::set like this :
+Now, I got a controller that serves CSS files, I obviously don't need any language specified. To prevent the normal behaviour, just pass `FALSE` as the third parameter to `Route::set` like this :
 	
 	Route::set('file.css', 'static/css/<action>.css', array(
 		'action'			=> '[^/.]+',
@@ -89,16 +89,16 @@ Now, I got a controller that serves CSS files, I obviously don't need any langua
 		'action'			=> NULL,
 	));
 	
-If you access http://www.domain.tld/static/css/custom_page.css, it will not redirect and Route::get('file.css.custom')->uri(array('action' => 'categories')) will not return the uri with a language code.
+If you access `http://www.domain.tld/static/css/custom_page.css`, it will not redirect and `Route::get('file.css.custom')->uri(array('action' => 'categories'))` will not return the uri with a language code.
 
 ### Language selector menu
 
-Multilang::selector($current) returns a menu to select the language. It will keep the same page. The `current` parameter adds the current language in the menu or not.
-You can change the view file multilang/selector.php.
+`Multilang::selector($current)` returns a menu to select the language. It will keep the same page. The `current` parameter adds the current language in the menu or not.
+You can change the view file `multilang/selector.php`.
 
 ### Misc	
 
-To access the current language, you can use Request::$lang.
+To access the current language, you can use `Request::$lang`.
 	
 ### Input
 
@@ -119,7 +119,7 @@ If somebody visits `http://www.domain.tld/page`, without a language, the best de
 
 #### The URI contains a language code
 
-1. The language code is chopped off before the request and stored in Request::$lang.
+1. The language code is chopped off before the request and stored in `Request::$lang`.
 2. `I18n::$lang` is set to the correct target language (from config).
 3. The correct locale is set (from config).
 4. A cookie with the language code is set.
