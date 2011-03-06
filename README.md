@@ -63,7 +63,7 @@ Let's say we have a product page, with kohana 3 we'd have something like :
 
 	
 If you try to access http://www.domain.tld/products/12-my-product, it will redirect to http://www.domain.tld/en/products/12-my-product.
-Now, I'm on the same page in french http://www.domain.tld/fr/products/12-my-product, but I'd like to translate it and set "produits" instead of "products". You can use the "Routes" object (notice the S at the end) to set multiple routes for each language.
+Now, I'm on the same page in french http://www.domain.tld/fr/products/12-my-product, but I'd like to translate it and set `produits` instead of `products`. You can use the `Routes` object (notice the S at the end) to set multiple routes for each language.
 
 	Routes::set('product.details', array(
 		'en' => 'products/<product_id>-<product_slug>',
@@ -78,7 +78,7 @@ Now, I'm on the same page in french http://www.domain.tld/fr/products/12-my-prod
 		'product_slug'		=> '',
 	));
 	
-This creates 2 routes named en.products.details and fr.products.details. The default language (english here) is required. If we have a third language like "de", it will use "en". The thing is, both url  http://www.domain.tld/fr/products/12-my-product and http://www.domain.tld/en/produits/12-my-product will still work. To make sure this is not an issue, you should use reverse routing everywhere. With Route::get('product/details')->uri(array('product_id' => 12, 'product_slug' => 'my_product')), you'll get the complete uri with the current user language code. To get another language, just pass a second parameter to Route::get('product/details', 'en').
+This creates 2 routes named en.products.details and fr.products.details. The default language (english here) is required. If we have a third language like `de`, it will use `en`. The thing is, both url  http://www.domain.tld/fr/products/12-my-product and http://www.domain.tld/en/produits/12-my-product will still work. To make sure this is not an issue, you should use reverse routing everywhere. With Route::get('product/details')->uri(array('product_id' => 12, 'product_slug' => 'my_product')), you'll get the complete uri with the current user language code. To get another language, just pass a second parameter to Route::get('product/details', 'en').
 
 Now, I got a controller that serves CSS files, I obviously don't need any language specified. To prevent the normal behaviour, just pass FALSE as the third parameter to Route::set like this :
 	
@@ -93,7 +93,7 @@ If you access http://www.domain.tld/static/css/custom_page.css, it will not redi
 
 ### Language selector menu
 
-Multilang::selector($current) returns a menu to select the language. It will keep the same page. The "current" parameter adds the current language in the menu or not.
+Multilang::selector($current) returns a menu to select the language. It will keep the same page. The `current` parameter adds the current language in the menu or not.
 You can change the view file multilang/selector.php.
 
 ### Misc	
@@ -111,7 +111,7 @@ See https://github.com/GeertDD/kohana-lang
 
 #### The URI does not contain a language code
 
-If somebody visits "http://www.domain.tld/page", without a language, the best default language will be found and the user will be redirected to the same URL *with* that language prepended. To find the best language, the following elements are taken into account (in this order):
+If somebody visits `http://www.domain.tld/page`, without a language, the best default language will be found and the user will be redirected to the same URL *with* that language prepended. To find the best language, the following elements are taken into account (in this order):
 
 1. a language cookie (set during a previous visit);
 2. the HTTP Accept-Language header;
@@ -120,11 +120,11 @@ If somebody visits "http://www.domain.tld/page", without a language, the best de
 #### The URI contains a language code
 
 1. The language code is chopped off before the request and stored in Request::$lang.
-2. "I18n::$lang" is set to the correct target language (from config).
+2. `I18n::$lang` is set to the correct target language (from config).
 3. The correct locale is set (from config).
 4. A cookie with the language code is set.
 5. Normal request processing continues.
 
-It is important to be aware that the *language part is completely chopped off* of the URI. When normal request processing continues it, it does so with a URI without language. This means that **your routes must not contain a `<lang>` key**. Also, you can create HMVC subrequests without having to worry about adding the current language to the URI.
+It is important to be aware that the *language part is completely chopped off* of the URI. When normal request processing continues it, it does so with a URI without language. This means that **your routes must not contain a language code. Also, you can create HMVC subrequests without having to worry about adding the current language to the URI.
 
 The one thing we still need to take care of then, is that any generated URLs should contain the language. An extension of `URL::site` is created for this. A third argument, `$lang`, is added to `URL::site`. By default, the current language is used (`Request::$lang`). You can also provide another language key as a string, or set the argument to `FALSE` to generate a URL without language.
