@@ -62,7 +62,7 @@ class Multilang_Route extends Kohana_Route {
 	static public function get($name, $lang = NULL)
 	{
 		// We use the current language if none given
-		if(is_null($lang))
+		if($lang === NULL)
 		{
 			$lang = Request::$lang;
 		}
@@ -76,7 +76,7 @@ class Multilang_Route extends Kohana_Route {
 			$name = Kohana::config('multilang.default').'.'.$name;
 		}
 		$route = parent::get($name);
-		if(!is_null($route))
+		if($route !== NULL)
 		{
 			$route->_lang = $lang;
 		}
