@@ -24,7 +24,7 @@ class Multilang_Request extends Kohana_Request {
 	 * @param	Kohana_Cache cache object
 	 * @return  Request
 	 */
-	public static function factory($uri = TRUE, Cache $cache = NULL)
+	public static function factory($uri = TRUE, Cache $cache = NULL, $injected_routes = array())
 	{
 		if(!Kohana::$is_cli)
 		{
@@ -72,7 +72,7 @@ class Multilang_Request extends Kohana_Request {
 			$uri = (string) substr($uri, strlen(Request::$lang));
 		}
 		// Continue normal request processing with the URI without language*/
-		return parent::factory($uri, $cache);
+		return parent::factory($uri, $cache, $injected_routes);
 	}
 
 
