@@ -137,18 +137,21 @@ class Multilang_Route extends Kohana_Route {
 	 *     ));
 	 *
 	 * @param   array   URI parameters
+	 * @param   string $lang a language code
 	 * @return  string
 	 * @throws  Kohana_Exception
 	 * @uses    Route::REGEX_Key
 	 */
-	public function uri(array $params = NULL)
+	public function uri(array $params = NULL, $lang = NULL)
 	{
 		$uri = parent::uri($params);
 
 		// We add the language code if required
 		if($this->_lang)
 		{
-			return $this->_lang.'/'.$uri;
+			// We dont use the route language to avoid some issues with routes of different languages having the same pattern
+			$lang = ($lang === NULL ? Request::$lang : $lang);
+			return $lang.'/'.$uri;
 		}
 		return $uri;
 	}
