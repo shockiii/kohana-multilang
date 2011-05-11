@@ -11,7 +11,7 @@ return array(
 	'default'		=> 'en',
 	'cookie'		=> 'lang',
 	'languages'		=>	array(
-		/*
+		
 		'en'		=> array(
 			'i18n'		=> 'en_US',
 			'locale'    => array('en_US.utf-8'),
@@ -27,6 +27,6 @@ return array(
 			'locale'    => array('de_DE.utf-8'),
 			'label'		=> 'deutsch',
 		),
-		 */
+		
 	),
 );

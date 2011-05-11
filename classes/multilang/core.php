@@ -105,7 +105,7 @@ class Multilang_Core {
 				}
 			} else {				
 				
-				$language['uri'] = Route::get($name, $code)->uri($params);
+				$language['uri'] = Route::get($name, $code)->uri($params, $code);
 			}
 		}
 		return View::factory('multilang/selector')
