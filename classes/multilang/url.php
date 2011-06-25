@@ -3,16 +3,12 @@
 class Multilang_URL extends Kohana_URL {
 	
 	/*
-	 * We don't trim the trailing slash if
-	 */
+	 * We don't trim the right slashes
+	 */	
 	public static function site($uri = '', $protocol = NULL, $index = TRUE)
 	{
-		if(strlen($uri) > 3)
-		{
-			$uri = trim($uri, '/');
-		}
 		// Chop off possible scheme, host, port, user and pass parts
-		$path = preg_replace('~^[-a-z0-9+.]++://[^/]++/?~', '', $uri);
+		$path = preg_replace('~^[-a-z0-9+.]++://[^/]++/?~', '', ltrim($uri, '/'));
 
 		if ( ! UTF8::is_ascii($path))
 		{

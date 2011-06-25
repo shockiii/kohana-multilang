@@ -5,30 +5,11 @@
 
 class Multilang_Route extends Kohana_Route {
 
-	protected $_lang = '';
-
-	static protected $_nolang_routes = array();
+	public $lang = NULL;
 
 	/**
-	 * Altered method to allow multiple routes for i18n.
-	 * You can pass an array with the language code as the key and the uri as the value.
-	 *
-	 *		Route::set('homepage', array(
-	 *				'en'		=> 'home',
-	 *				'fr'		=> 'accueil',
-	 *			))->defaults(array(
-	 *				'controller'		=> 'homepage',
-	 *				'action'			=> 'index',
-	 *			));
-	 *
-	 * Stores a named route and returns it. The "action" will always be set to
-	 * "index" if it is not defined.
-	 *
-	 *     Route::set('default', '(<controller>(/<action>(/<id>)))')
-	 *         ->defaults(array(
-	 *             'controller' => 'welcome',
-	 *         ));
-	 *
+	 * Altered method to allow a language
+	 * 	 *
 	 * @param   string   route name
 	 * @param   mixed   URI pattern or Array of URI patterns or a lambda/callback function
 	 * @param   array   regex patterns for route keys
@@ -36,17 +17,8 @@ class Multilang_Route extends Kohana_Route {
 	 * @return  Route
 	 */
 	static public function set($name, $uri_callback = NULL, $regex = NULL, $lang = NULL)
-	{
-		if($lang)
-		{
-			$name = $lang.'.'.$name;
-		}
-		Route::$_routes[$name] = new Route($uri_callback, $regex, $lang);
-		if($lang === FALSE)
-		{
-			Route::$_nolang_routes[$name] = Route::$_routes[$name];
-		}
-		return Route::$_routes[$name];
+	{		
+		return Route::$_routes[$name] = new Route($uri_callback, $regex, $lang);		
 	}
 
 
@@ -71,16 +43,13 @@ class Multilang_Route extends Kohana_Route {
 		if(isset(Route::$_routes[$lang.'.'.$name]))
 		{
 			$name = $lang.'.'.$name;
-			// then the default language
-		} elseif(isset(Route::$_routes[Kohana::config('multilang.default').'.'.$name])) {
+			
+		} // then the default language
+		elseif(isset(Route::$_routes[Kohana::config('multilang.default').'.'.$name])) {
 			$name = Kohana::config('multilang.default').'.'.$name;
 		}
-		$route = parent::get($name);
-		if($route !== NULL)
-		{
-			$route->_lang = $lang;
-		}
-		return $route;
+		// And if we don't have any for this language, it means that route is neither defined nor multilingual		
+		return parent::get($name);
 	}
 
 	/**
@@ -119,7 +88,7 @@ class Multilang_Route extends Kohana_Route {
 	 */
 	public function __construct($uri = NULL, array $regex = NULL, $lang = NULL)
 	{
-		$this->_lang = $lang;
+		$this->lang = $lang;
 		return parent::__construct($uri, $regex);
 	}
 
@@ -144,14 +113,17 @@ class Multilang_Route extends Kohana_Route {
 	 */
 	public function uri(array $params = NULL, $lang = NULL)
 	{
-		$uri = parent::uri($params);
-
-		// We add the language code if required
-		if($this->_lang)
+		// We define the language if required
+		if($this->lang !== NULL)
 		{
-			// We dont use the route language to avoid some issues with routes of different languages having the same pattern
-			$lang = ($lang === NULL ? Request::$lang : $lang);
-			return $lang.'/'.$uri;
+			$params['lang'] = ($lang === NULL ? $this->lang : $lang);
+		}		
+		
+		$uri = parent::uri($params);
+		// If it's the default route, we add a trailing slash
+		if(Route::name($this) === 'default')
+		{
+			$uri .= '/';
 		}
 		return $uri;
 	}
@@ -176,50 +148,5 @@ class Multilang_Route extends Kohana_Route {
 		return URL::site(Route::get($name, $lang)->uri($params), $protocol);
 	}
 
-
-	/**
-	 * Get all the routes without any language code
-	 * @return array
-	 */
-	static public function nolang_routes()
-	{
-		return Route::$_nolang_routes;
-	}
-
-
-	/**
-	 * Saves or loads the route cache. If your routes will remain the same for
-	 * a long period of time, use this to reload the routes from the cache
-	 * rather than redefining them on every page load.
-	 *
-	 * It remakes the nolang_routes array too for language less routes
-	 *
-	 *     if ( ! Route::cache())
-	 *     {
-	 *         // Set routes here (or include a file for example)
-	 *         Route::cache(TRUE);
-	 *     }
-	 *
-	 * @param   boolean   cache the current routes
-	 * @return  void      when saving routes
-	 * @return  boolean   when loading routes
-	 * @uses    Kohana::cache
-	 */
-	static public function cache($save = FALSE)
-	{
-		$return = parent::cache($save);
-		if($save !== TRUE && Route::$_routes)
-		{
-			Route::$_nolang_routes = array();
-			foreach(Route::$_routes as $name => $route)
-			{
-				if($route->_lang === FALSE)
-				{
-					Route::$_nolang_routes[$name] = Route::$_routes[$name];
-				}
-			}
-		}
-		return $return;
-	}
-
+	
 }
