@@ -31,7 +31,7 @@ class Multilang_Request extends Kohana_Request {
 		if(!Kohana::$is_cli)
 		{
 			// If we don't hide the default language, we must look for a language code for the root uri
-			if(!Kohana::config('multilang.hide_default') && $uri === TRUE && Request::detect_uri() === '')
+			if(Kohana::config('multilang.auto_detect') && $uri === TRUE && Request::detect_uri() === '')
 			{			
 				$lang = Multilang::find_user_language();	
 				
@@ -40,14 +40,23 @@ class Multilang_Request extends Kohana_Request {
 
 				// Redirect to the root URI, but with language prepended
 				header($protocol.' 302 Found');
-				header('Location: '.URL::base(TRUE, TRUE).$lang.'/');	
-				
+				header('Location: '.URL::base(TRUE, TRUE).$lang.'/');				
 				exit;
 			}		
 		}		
 		
 		$request = parent::factory($uri, $cache, $injected_routes);
-		Request::$lang = $request->param('lang');
+		
+		// If the default language is hidden, we manually set it
+		if(Kohana::config('multilang.hide_default') && $request->param('lang') === NULL)
+		{
+			Request::$lang = Kohana::config('multilang.default');
+		}
+		else
+		{
+			Request::$lang = $request->param('lang');
+		}
+		
 		Multilang::init();
 		return $request;
 	}

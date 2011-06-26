@@ -99,39 +99,54 @@ class Multilang_Core {
 		}
 
 		// Create uris for each language
-		foreach($languages as $code => &$language)
+		foreach($languages as $lang => &$language)
 		{				
 			// If it's the current language
-			if($code === Request::$lang)
+			if($lang === Request::$lang)
 			{
 				// We only display it when required
 				if($current)
 				{
-					$selectors[$code] = '<span class="multilang-selected multilang-'.$code.'">'.$languages[$code]['label'].'</span>';
+					$selectors[$lang] = '<span class="multilang-selected multilang-'.$lang.'">'.$languages[$lang]['label'].'</span>';
 				}				
 			}
 			else
 			{	
+				$route = NULL;
+				
 				// If it's the default route, it's unique and special (like you <3)
 				if($current_route === 'default')
 				{
 					// We juste need to change the language parameter
-					$route = Request::initial()->route();
-					$params = array(
-						'lang'	=> $code,
-					);
+					$route = Request::initial()->route();					
+					
+					if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') !== $lang)
+					{
+						$params['lang'] = $lang;					
+					}
+					
 				}
 				else
-				{
-					$route = Route::get($name, $code);
+				{	
+					if(Arr::get(Route::all(), $lang.'.'.$name))
+					{
+						$route = Route::get($name, $lang);
+					}
 				}					
 
-				$selectors[$code] = HTML::anchor($route->uri($params), $languages[$code]['label'], array('class' => 'multilang-selectable multilang-'.$code, 'title' => $languages[$code]['label']));
+				if($route !== NULL)
+				{
+					$selectors[$lang] = HTML::anchor($route->uri($params), $languages[$lang]['label'], array('class' => 'multilang-selectable multilang-'.$lang, 'title' => $languages[$lang]['label']));
+				}
 			}
 		}
 		
-		
-		return View::factory('multilang/selector')
+		// We display the menu only if we can select another language for this page
+		if(count($selectors) > 1)
+		{
+			return View::factory('multilang/selector')
 			->bind('selectors', $selectors);
+		}
+		return '';
 	}
 }

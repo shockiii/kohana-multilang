@@ -18,6 +18,20 @@ class Multilang_Route extends Kohana_Route {
 	 */
 	static public function set($name, $uri_callback = NULL, $regex = NULL, $lang = NULL)
 	{		
+		if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') != $lang)
+		{
+			if($lang !== NULL)
+			{
+				$uri_callback = '<lang>/'.$uri_callback;		
+				$regex['lang'] = $lang;			
+			}
+		}
+		
+		if($lang !== NULL)
+		{
+			$name = $lang.'.'.$name;
+		}		
+		
 		return Route::$_routes[$name] = new Route($uri_callback, $regex, $lang);		
 	}
 

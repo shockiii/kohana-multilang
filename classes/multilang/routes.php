@@ -33,33 +33,26 @@ class Multilang_Routes {
 		
 		$default_lang	= Kohana::config('multilang.default');
 		$languages		= Kohana::config('multilang.languages');
+		
 		// We first look for the default language uri which is obviously compulsory
 		$default_uri = Arr::get($uris, $default_lang);
 		if($default_uri === NULL)
 		{
-			throw new Kohana_Exception('The default route uri is required for the language :lang', array(':lang' => $default_lang));
+			throw new Kohana_Exception('The default language route uri is required for the route: :route', array(':route' => $name));
 		}
 		else
-		{
-			// If we dont hide the default language in the uri
-			if(!Kohana::config('multilang.hide_default'))
-			{
-				$default_uri = '<lang>/'.$default_uri;		
-				$regex['lang'] = $default_lang;
-			}
-			$routes->_routes[$default_lang.'.'.$name] = Route::set($default_lang.'.'.$name, $default_uri, $regex, $default_lang);
-			
+		{			
+			$routes->_routes[$default_lang.'.'.$name] = Route::set($name, $default_uri, $regex, $default_lang);			
 		}
 		unset($languages[$default_lang]);
 		
 		// Then we add the routes for all the other languages
 		foreach($languages as $lang => $settings)
 		{			
-			$uri = '<lang>/'.(Arr::get($uris, $lang) ? $uris[$lang] : $uris[$default_lang]);
-			$regex['lang'] = $lang;
+			$uri = (Arr::get($uris, $lang) ? $uris[$lang] : $uris[$default_lang]);
 
 			// For the uri, we use the one given or the default one			
-			$routes->_routes[$lang.'.'.$name] = Route::set($lang.'.'.$name, $uri, $regex, $lang);
+			$routes->_routes[$lang.'.'.$name] = Route::set($name, $uri, $regex, $lang);
 		}		
 		return $routes;
 	}
