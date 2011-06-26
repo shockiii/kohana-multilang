@@ -119,11 +119,12 @@ class Multilang_Core {
 				{
 					// We juste need to change the language parameter
 					$route = Request::initial()->route();					
-					
+					$params['lang'] = NULL;
 					if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') !== $lang)
 					{
 						$params['lang'] = $lang;					
 					}
+					
 					
 				}
 				else

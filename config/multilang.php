@@ -17,6 +17,7 @@ return array(
 	 * For each language, you need to give a code (2-5 chars) for the key,
 	 * the 5 letters i18n language code, the locale and the label for the auto generated language selector menu.
 	 */
+	/*
 	'languages'		=>	array(			
 		'en'		=> array(
 			'i18n'		=> 'en_US',
@@ -34,4 +35,5 @@ return array(
 			'label'		=> 'deutsch',
 		),			 
 	),
+	*/
 );
