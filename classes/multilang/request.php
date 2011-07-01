@@ -49,8 +49,8 @@ class Multilang_Request extends Kohana_Request {
 		
 		$request = parent::factory($uri, $cache, $injected_routes);
 		
-		// If the default language is hidden, we manually set it		
-		if(Kohana::config('multilang.hide_default') && $request->param('lang') === NULL)
+		// If the default language is hidden or there is no language, we manually set it to default	
+		if(Kohana::config('multilang.hide_default') && $request->param('lang') === NULL || $request->route()->lang === NULL)
 		{
 			Request::$lang = Kohana::config('multilang.default');
 		}
