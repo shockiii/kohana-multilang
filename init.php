@@ -3,6 +3,8 @@
  * The default route
  * It's a bit tricky and particular since it got no translations.
  * We need to create a general route for this one
+ *
+ * It is recommended to move this route into your bootstrap and adapt it.
  */
 
 $languages = array();
@@ -27,5 +29,5 @@ Route::set('default', $lang_param, array(
 ))->defaults(array(
 	'controller'	=> 'home',
 	'action'		=> 'index',
-	'lang'			=> NULL,
+	'lang'			=> Kohana::config('multilang.default'),
 ));
