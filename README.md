@@ -46,6 +46,8 @@ Multilingual module for Kohana PHP Framework, version 3.1
 			 */
 		),
 	);
+	
+The default route is special and an example is provided in the init.php file of this module. It is recommended to comment it there and copy it in your bootstrap.
 
 ### Example
 
