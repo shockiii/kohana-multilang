@@ -25,16 +25,16 @@ class Multilang_Request extends Kohana_Request {
 	 * @param   array   $injected_routes an array of routes to use, for testing
 	 * @return  Request
 	 */
-	public static function factory($uri = TRUE, Cache $cache = NULL, $injected_routes = array())
+	public static function factory($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array())
 	{
 		
 		if(!Kohana::$is_cli)
 		{
 			// If we don't hide the default language, we must look for a language code for the root uri
-			if(Request::detect_uri() === '' && Kohana::config('multilang.auto_detect') && $uri === TRUE)
+			if(Request::detect_uri() === '' && Kohana::$config->load('multilang.auto_detect') && $uri === TRUE)
 			{			
 				$lang = Multilang::find_user_language();
-				if(!Kohana::config('multilang.hide_default') || $lang != Kohana::config('multilang.default'))
+				if(!Kohana::$config->load('multilang.hide_default') || $lang != Kohana::$config->load('multilang.default'))
 				{
 					// Use the default server protocol
 					$protocol = (isset($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
@@ -50,9 +50,9 @@ class Multilang_Request extends Kohana_Request {
 		$request = parent::factory($uri, $cache, $injected_routes);
 		
 		// If the default language is hidden or there is no language, we manually set it to default	
-		if(Kohana::config('multilang.hide_default') && $request->param('lang') === NULL || $request->route()->lang === NULL)
+		if(Kohana::$config->load('multilang.hide_default') && $request->param('lang') === NULL || $request->route()->lang === NULL)
 		{
-			Request::$lang = Kohana::config('multilang.default');
+			Request::$lang = Kohana::$config->load('multilang.default');
 		}
 		else
 		{

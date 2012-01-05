@@ -18,7 +18,7 @@ class Multilang_Route extends Kohana_Route {
 	 */
 	static public function set($name, $uri_callback = NULL, $regex = NULL, $lang = NULL)
 	{		
-		if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') != $lang)
+		if(!Kohana::$config->load('multilang.hide_default') || Kohana::$config->load('multilang.default') != $lang)
 		{
 			if($lang !== NULL)
 			{
@@ -59,8 +59,8 @@ class Multilang_Route extends Kohana_Route {
 			$name = $lang.'.'.$name;
 			
 		} // then the default language
-		elseif(isset(Route::$_routes[Kohana::config('multilang.default').'.'.$name])) {
-			$name = Kohana::config('multilang.default').'.'.$name;
+		elseif(isset(Route::$_routes[Kohana::$config->load('multilang.default').'.'.$name])) {
+			$name = Kohana::$config->load('multilang.default').'.'.$name;
 		}
 		// And if we don't have any for this language, it means that route is neither defined nor multilingual		
 		return parent::get($name);
