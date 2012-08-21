@@ -18,11 +18,11 @@ class Multilang_Core {
 	 */
 	static public function find_user_language()
 	{
-		if(Kohana::config('multilang.auto_detect'))
+		if(Kohana::$config->load('multilang.auto_detect'))
 		{
 			// Get the list of supported languages
-			$languages	= (array) Kohana::config('multilang.languages');
-			$cookie		= Kohana::config('multilang.cookie');
+			$languages	= (array) Kohana::$config->load('multilang.languages');
+			$cookie		= Kohana::$config->load('multilang.cookie');
 
 			// Look for language cookie first
 			if($lang = Cookie::get($cookie))
@@ -48,7 +48,7 @@ class Multilang_Core {
 			}
 		}
 		// Return the hard-coded default language as final fallback
-		return Kohana::config('multilang.default');
+		return Kohana::$config->load('multilang.default');
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Multilang_Core {
 	static public function init()
 	{
 		// Get the list of supported languages
-		$langs = (array) Kohana::config('multilang.languages');
+		$langs = (array) Kohana::$config->load('multilang.languages');
 
 		// Set the language in I18n
 		I18n::lang($langs[Request::$lang]['i18n']);
@@ -65,7 +65,7 @@ class Multilang_Core {
 		// Set locale
 		setlocale(LC_ALL, $langs[Request::$lang]['locale']);
 
-		$cookie = Kohana::config('multilang.cookie');
+		$cookie = Kohana::$config->load('multilang.cookie');
 		// Update language cookie if needed
 		if(Cookie::get($cookie) !== Request::$lang)
 		{
@@ -80,7 +80,7 @@ class Multilang_Core {
 	 */
 	static public function selector($current = TRUE)
 	{
-		$languages = (array) Kohana::config('multilang.languages');
+		$languages = (array) Kohana::$config->load('multilang.languages');
 
 		// Get the current route name
 		$current_route = Route::name(Request::initial()->route());		
@@ -120,7 +120,7 @@ class Multilang_Core {
 					// We juste need to change the language parameter
 					$route = Request::initial()->route();					
 					$params['lang'] = NULL;
-					if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') !== $lang)
+					if(!Kohana::$config->load('multilang.hide_default') || Kohana::$config->load('multilang.default') !== $lang)
 					{
 						$params['lang'] = $lang;					
 					}

@@ -31,8 +31,8 @@ class Multilang_Routes {
 		// We add the routes for each language and set their names to lang.name (en.homepage for example).
 		// The <lang> segment is also added on the uri if it's not hidden
 		
-		$default_lang	= Kohana::config('multilang.default');
-		$languages		= Kohana::config('multilang.languages');
+		$default_lang	= Kohana::$config->load('multilang.default');
+		$languages		= Kohana::$config->load('multilang.languages');
 		
 		// We first look for the default language uri which is obviously compulsory
 		$default_uri = Arr::get($uris, $default_lang);
