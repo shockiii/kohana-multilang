@@ -18,7 +18,9 @@ class Multilang_Route extends Kohana_Route {
 	 */
 	static public function set($name, $uri_callback = NULL, $regex = NULL, $lang = NULL)
 	{		
-		if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') != $lang)
+		$config = Kohana::$config->load('multilang');
+		
+		if(!$config->hide_default || $config->default != $lang)
 		{
 			if($lang !== NULL)
 			{
@@ -59,8 +61,8 @@ class Multilang_Route extends Kohana_Route {
 			$name = $lang.'.'.$name;
 			
 		} // then the default language
-		elseif(isset(Route::$_routes[Kohana::config('multilang.default').'.'.$name])) {
-			$name = Kohana::config('multilang.default').'.'.$name;
+		elseif(isset(Route::$_routes[Kohana::$config->load('multilang')->default.'.'.$name])) {
+			$name = $config->default.'.'.$name;
 		}
 		// And if we don't have any for this language, it means that route is neither defined nor multilingual		
 		return parent::get($name);
@@ -162,5 +164,73 @@ class Multilang_Route extends Kohana_Route {
 		return URL::site(Route::get($name, $lang)->uri($params), $protocol);
 	}
 
+	/**
+	 * We don't want to remove the trailing slash.
+	 */
+	public function matches(Request $request)
+	{
+		// Get the URI from the Request
+		//$uri = trim($request->uri(), '/');
+		$uri = ltrim($request->uri(), '/');
+
+		if ( ! preg_match($this->_route_regex, $uri, $matches))
+			return FALSE;
+
+		$params = array();
+		foreach ($matches as $key => $value)
+		{
+			if (is_int($key))
+			{
+				// Skip all unnamed keys
+				continue;
+			}
+
+			// Set the value for all matched keys
+			$params[$key] = $value;
+		}
+
+		foreach ($this->_defaults as $key => $value)
+		{
+			if ( ! isset($params[$key]) OR $params[$key] === '')
+			{
+				// Set default values for any key that was not matched
+				$params[$key] = $value;
+			}
+		}
+
+		if ( ! empty($params['controller']))
+		{
+			// PSR-0: Replace underscores with spaces, run ucwords, then replace underscore
+			$params['controller'] = str_replace(' ', '_', ucwords(str_replace('_', ' ', $params['controller'])));
+		}
+
+		if ( ! empty($params['directory']))
+		{
+			// PSR-0: Replace underscores with spaces, run ucwords, then replace underscore
+			$params['directory'] = str_replace(' ', '_', ucwords(str_replace('_', ' ', $params['directory'])));
+		}
+
+		if ($this->_filters)
+		{
+			foreach ($this->_filters as $callback)
+			{
+				// Execute the filter giving it the route, params, and request
+				$return = call_user_func($callback, $this, $params, $request);
+
+				if ($return === FALSE)
+				{
+					// Filter has aborted the match
+					return FALSE;
+				}
+				elseif (is_array($return))
+				{
+					// Filter has modified the parameters
+					$params = $return;
+				}
+			}
+		}
+
+		return $params;
+	}
 	
 }
