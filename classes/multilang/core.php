@@ -17,12 +17,14 @@ class Multilang_Core {
 	 * @return  string  language key, e.g. "en", "fr", "nl", "en_US", "en-us", etc.
 	 */
 	static public function find_user_language()
-	{
-		if(Kohana::config('multilang.auto_detect'))
+	{	
+		$config = Kohana::$config->load('multilang');
+		
+		if($config->auto_detect)
 		{
 			// Get the list of supported languages
-			$languages	= (array) Kohana::config('multilang.languages');
-			$cookie		= Kohana::config('multilang.cookie');
+			$languages	= $config->languages;
+			$cookie		= $config->cookie;
 
 			// Look for language cookie first
 			if($lang = Cookie::get($cookie))
@@ -48,7 +50,7 @@ class Multilang_Core {
 			}
 		}
 		// Return the hard-coded default language as final fallback
-		return Kohana::config('multilang.default');
+		return $config->default;
 	}
 
 	/**
@@ -56,8 +58,10 @@ class Multilang_Core {
 	 */
 	static public function init()
 	{
+		$config = Kohana::$config->load('multilang');
+		
 		// Get the list of supported languages
-		$langs = (array) Kohana::config('multilang.languages');
+		$langs = $config->languages;
 
 		// Set the language in I18n
 		I18n::lang($langs[Request::$lang]['i18n']);
@@ -65,7 +69,7 @@ class Multilang_Core {
 		// Set locale
 		setlocale(LC_ALL, $langs[Request::$lang]['locale']);
 
-		$cookie = Kohana::config('multilang.cookie');
+		$cookie = $config->cookie;
 		// Update language cookie if needed
 		if(Cookie::get($cookie) !== Request::$lang)
 		{
@@ -80,7 +84,9 @@ class Multilang_Core {
 	 */
 	static public function selector($current = TRUE)
 	{
-		$languages = (array) Kohana::config('multilang.languages');
+		$config = Kohana::$config->load('multilang');
+		
+		$languages = $config->languages;
 
 		// Get the current route name
 		$current_route = Route::name(Request::initial()->route());		
@@ -120,7 +126,7 @@ class Multilang_Core {
 					// We juste need to change the language parameter
 					$route = Request::initial()->route();					
 					$params['lang'] = NULL;
-					if(!Kohana::config('multilang.hide_default') || Kohana::config('multilang.default') !== $lang)
+					if(!$config->hide_default || $config->default !== $lang)
 					{
 						$params['lang'] = $lang;					
 					}
