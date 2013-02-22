@@ -7,14 +7,17 @@
  * It is recommended to move this route into your bootstrap and adapt it.
  */
 
+/*
 $languages = array();
 $lang_param = '<lang>/';
 
+$config = Kohana::$config->load('multilang');
+
 // Need a regex for all the available languages
-foreach(Kohana::config('multilang.languages') as $lang => $settings)
+foreach($config->languages as $lang => $settings)
 {
 	// If we hdie the default language, we make lang parameter optional
-	if(Kohana::config('multilang.hide_default') && Kohana::config('multilang.default') === $lang)
+	if($config->.hide_default && $config->default === $lang)
 	{
 		$lang_param = '(<lang>/)';
 	}
@@ -29,5 +32,6 @@ Route::set('default', $lang_param, array(
 ))->defaults(array(
 	'controller'	=> 'home',
 	'action'		=> 'index',
-	'lang'			=> Kohana::config('multilang.default'),
+	'lang'			=> $config->default,
 ));
+ */

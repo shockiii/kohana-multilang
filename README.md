@@ -1,8 +1,8 @@
-# Kohana Multilang Module 2.0
+# Kohana Multilang Module 3.0
 
-!!! NEW VERSION 2.0 !!!
+!!! NEW VERSION 3.0 !!!
 
-Multilingual module for Kohana PHP Framework, version 3.1
+Multilingual module for the Kohana PHP Framework, version 3.3
 
 ## Features
 
@@ -59,7 +59,7 @@ Route::set('product.details', 'products/<product_id>-<product_slug>', array(
 	'product_id'		=> '[0-9]+',
 	'product_slug'		=> '.+',
 ))->defaults(array(
-	'controller'		=> 'product',
+	'controller'		=> 'Product',
 	'action'			=> 'details',
 	'product_id'		=> NULL,
 	'product_slug'		=> '',
@@ -79,7 +79,7 @@ Let's take a look:
 		'product_id'		=> '[0-9]+',
 		'product_slug'		=> '.+',
 	))->defaults(array(
-		'controller'		=> 'product',
+		'controller'		=> 'Product',
 		'action'			=> 'details',
 		'product_id'		=> NULL,
 		'product_slug'		=> '',
@@ -91,7 +91,7 @@ If you wanna create a route for only one language, you're gonna have to pass a 4
 
 	Route::set('product.made-in-france', 'produits/fabrique-en-france', NULL, 'fr')
 	->defaults(array(
-		'controller'		=> 'product',
+		'controller'		=> 'Product',
 		'action'			=> 'made_in_france',		
 	));
 
