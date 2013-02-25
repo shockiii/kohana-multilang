@@ -28,7 +28,7 @@ class Multilang_Route extends Kohana_Route {
 				$regex['lang'] = $lang;			
 			}
 		}
-		
+
 		if($lang !== NULL)
 		{
 			$name = $lang.'.'.$name;
@@ -108,10 +108,8 @@ class Multilang_Route extends Kohana_Route {
 		return parent::__construct($uri, $regex);
 	}
 
-
+	
 	/**
-	 * Altered method to handle multilingual uris.
-	 * 
 	 * Generates a URI for the current route based on the parameters given.
 	 *
 	 *     // Using the "default" route: "users/profile/10"
@@ -121,8 +119,7 @@ class Multilang_Route extends Kohana_Route {
 	 *         'id'         => '10'
 	 *     ));
 	 *
-	 * @param   array   URI parameters
-	 * @param   string $lang a language code
+	 * @param   array   $params URI parameters
 	 * @return  string
 	 * @throws  Kohana_Exception
 	 * @uses    Route::REGEX_Key
@@ -133,17 +130,130 @@ class Multilang_Route extends Kohana_Route {
 		if($this->lang !== NULL)
 		{
 			$params['lang'] = ($lang === NULL ? $this->lang : $lang);
-		}		
+		}	
 		
-		$uri = parent::uri($params);
-		// If it's the default route, we add a trailing slash
-		if(Route::name($this) === 'default')
+		// Start with the routed URI
+		$uri = $this->_uri;
+
+		if (strpos($uri, '<') === FALSE AND strpos($uri, '(') === FALSE)
 		{
-			$uri .= '/';
+			// This is a static route, no need to replace anything
+
+			if ( ! $this->is_external())
+				return $uri;
+
+			// If the localhost setting does not have a protocol
+			if (strpos($this->_defaults['host'], '://') === FALSE)
+			{
+				// Use the default defined protocol
+				$params['host'] = Route::$default_protocol.$this->_defaults['host'];
+			}
+			else
+			{
+				// Use the supplied host with protocol
+				$params['host'] = $this->_defaults['host'];
+			}
+
+			// Compile the final uri and return it
+			return rtrim($params['host'], '/').'/'.$uri;
 		}
+
+		// Keep track of whether an optional param was replaced
+		$provided_optional = FALSE;
+
+		while (preg_match('#\([^()]++\)#', $uri, $match))
+		{
+
+			// Search for the matched value
+			$search = $match[0];
+
+			// Remove the parenthesis from the match as the replace
+			$replace = substr($match[0], 1, -1);
+
+			while (preg_match('#'.Route::REGEX_KEY.'#', $replace, $match))
+			{
+				list($key, $param) = $match;
+
+				if (isset($params[$param]) AND $params[$param] !== Arr::get($this->_defaults, $param))
+				{
+					// Future optional params should be required
+					$provided_optional = TRUE;
+
+					// Replace the key with the parameter value
+					$replace = str_replace($key, $params[$param], $replace);
+				}
+				elseif ($provided_optional)
+				{
+					// Look for a default
+					if (isset($this->_defaults[$param]))
+					{
+						$replace = str_replace($key, $this->_defaults[$param], $replace);
+					}
+					else
+					{
+						// Ungrouped parameters are required
+						throw new Kohana_Exception('Required route parameter not passed: :param', array(
+							':param' => $param,
+						));
+					}
+				}
+				else
+				{
+					// This group has missing parameters
+					$replace = '';
+					break;
+				}
+			}
+
+			// Replace the group in the URI
+			$uri = str_replace($search, $replace, $uri);
+		}
+
+		while (preg_match('#'.Route::REGEX_KEY.'#', $uri, $match))
+		{
+			list($key, $param) = $match;
+
+			if ( ! isset($params[$param]))
+			{
+				// Look for a default
+				if (isset($this->_defaults[$param]))
+				{
+					$params[$param] = $this->_defaults[$param];
+				}
+				else
+				{
+					// Ungrouped parameters are required
+					throw new Kohana_Exception('Required route parameter not passed: :param', array(
+						':param' => $param,
+					));
+				}
+			}
+
+			$uri = str_replace($key, $params[$param], $uri);
+		}
+
+		// Trim all extra slashes from the URI
+		//$uri = preg_replace('#//+#', '/', rtrim($uri, '/'));
+		$uri = preg_replace('#//+#', '/', $uri);
+
+		if ($this->is_external())
+		{
+			// Need to add the host to the URI
+			$host = $this->_defaults['host'];
+
+			if (strpos($host, '://') === FALSE)
+			{
+				// Use the default defined protocol
+				$host = Route::$default_protocol.$host;
+			}
+
+			// Clean up the host and prepend it to the URI
+			$uri = rtrim($host, '/').'/'.$uri;
+		}
+
 		return $uri;
 	}
-
+	
 	/**
 	 * Altered method to handle multilingual parameter
 	 *
