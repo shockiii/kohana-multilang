@@ -55,15 +55,15 @@ If you try to access `http://www.domain.tld/`, the module will redirect it to `h
 
 Let's say we have a product page, with kohana 3 we'd have something like : 
 	
-Route::set('product.details', 'products/<product_id>-<product_slug>', array(
-	'product_id'		=> '[0-9]+',
-	'product_slug'		=> '.+',
-))->defaults(array(
-	'controller'		=> 'Product',
-	'action'			=> 'details',
-	'product_id'		=> NULL,
-	'product_slug'		=> '',
-));
+	Route::set('product.details', 'products/<product_id>-<product_slug>', array(
+		'product_id'		=> '[0-9]+',
+		'product_slug'		=> '.+',
+	))->defaults(array(
+		'controller'		=> 'Product',
+		'action'			=> 'details',
+		'product_id'		=> NULL,
+		'product_slug'		=> '',
+	));
 
 
 	
