@@ -55,15 +55,15 @@ If you try to access `http://www.domain.tld/`, the module will redirect it to `h
 
 Let's say we have a product page, with kohana 3 we'd have something like : 
 	
-Route::set('product.details', 'products/<product_id>-<product_slug>', array(
-	'product_id'		=> '[0-9]+',
-	'product_slug'		=> '.+',
-))->defaults(array(
-	'controller'		=> 'Product',
-	'action'			=> 'details',
-	'product_id'		=> NULL,
-	'product_slug'		=> '',
-));
+	Route::set('product.details', 'products/<product_id>-<product_slug>', array(
+		'product_id'		=> '[0-9]+',
+		'product_slug'		=> '.+',
+	))->defaults(array(
+		'controller'		=> 'Product',
+		'action'			=> 'details',
+		'product_id'		=> NULL,
+		'product_slug'		=> '',
+	));
 
 
 	
@@ -95,7 +95,7 @@ If you wanna create a route for only one language, you're gonna have to pass a 4
 		'action'			=> 'made_in_france',		
 	));
 
-And then to get it `Route::get('fr.product.made-in-france')` or `Route::get('product.made-in-france', 'fr)`.
+And then to get it `Route::get('fr.product.made-in-france')` or `Route::get('product.made-in-france', 'fr')`.
 
 The default route is particular and its declaration is set in init.php. Since it doesnt need any translations and has a different behaviour (we wanna keep the trailing slash), we create a custom route that alows all the languages.
 
